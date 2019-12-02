@@ -37,10 +37,14 @@ This Lambda is subscribed to SNS events, but can be easily modified to use direc
 ```
 aws cloudformation package --template-file s3-copy-to-china.yml --s3-bucket <BUCKET> --output-template-file packaged.yml
 ```
-where **BUCKET** - name of bucket from mentioned above. After it you can find `packaged.yml` generated here.
+
+where **BUCKET** - name of bucket mentioned above. After it you can find `packaged.yml` generated here.
+
 * Deploy `packaged.yml` to AWS as:
-** AWS Cloudformation Console
-** or using command line righ here:
+
+   * AWS Cloudformation Console
+   * or using command line righ here:
+
 ```
 aws cloudformation deploy --template-file packaged.yml --stack-name <YOUR STACK NAME> --parameter-overrides <PARAMETERS OVERRIDES>
 ```
