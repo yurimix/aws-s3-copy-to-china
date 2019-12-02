@@ -26,5 +26,33 @@ Note: using SSM to store sensitive data is one of techniques which can be used t
 # Events
 This Lambda is subscribed to SNS events, but can be easily modified to use direct S3 bucket events.
 
+# Deployment
+
+## Prepare S3 bucket for Lambda deployment
+* Go to AWS S3 console and choose one of existing (or create a new one) S3 bucket which will be used for deployment.
+
+## Prepare deployment template
+* Go to `./src`
+* Type the following command:
+```
+aws cloudformation package --template-file s3-copy-to-china.yml --s3-bucket <BUCKET> --output-template-file packaged.yml
+```
+where **BUCKET** - name of bucket from mentioned above. After it you can find `packaged.yml` generated here.
+* Deploy `packaged.yml` to AWS as:
+** AWS Cloudformation Console
+** or using command line righ here:
+```
+aws cloudformation deploy --template-file packaged.yml --stack-name <YOUR STACK NAME> --parameter-overrides <PARAMETERS OVERRIDES>
+```
+for example:
+```
+aws cloudformation deploy --template-file packaged.yml --stack-name to-s3-china --parameter-overrides \
+  --parameter-overrides CnS3BucketName=ch-bucket CnS3BucketRegion=cn-north-1 S3BucketSNS=s3-sns-topic SsmCnCredentials=cn-credentials
+```
+
+
+
+
+
 
 

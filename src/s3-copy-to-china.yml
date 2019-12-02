@@ -1,0 +1,82 @@
+Transform: AWS::Serverless-2016-10-31
+Description: Creates Lambda that can replicate data between Global AWS and China's S3 buckets.
+Parameters:
+  CnS3BucketName:
+    Description: DNS-compliant destination S3 Bucket name.
+    Type: String
+    MinLength: 1
+  CnS3BucketRegion:
+    Description: Destination S3 Bucket region.
+    Type: String
+    MinLength: 1
+  SsmCnCredentials:
+    Description: The path to root SSM parameter where credentials are stored.
+    Type: AWS::SSM::Parameter::Value<String>
+  S3BucketSNS:
+    Description: Name of S3 SNS topic which lambda should subscribe to.
+    Type: String
+    MinLength: 1
+
+Resources:
+  ReplicationLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-lambda-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: LambdaCWLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                Resource: '*'
+        - PolicyName: LambdaS3ToS3
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectTagging
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:PutObjectTagging
+                  - s3:ListBucket
+                Resource: arn:aws:s3:::*
+  ReplicationLambda:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - ReplicationLambdaRole
+    Properties:
+      CodeUri: ./s3-copy-to-china.js
+      Handler: s3-copy-to-china.lambda_handler
+      Role: !GetAtt
+        - ReplicationLambdaRole
+        - Arn
+      Runtime: nodejs10.x
+      MemorySize: 128
+      Timeout: 900
+      FunctionName: !Sub ${AWS::StackName}-replication-lambda
+      Environment:
+        Variables:
+          CN_REGION: !Ref CnS3BucketRegion
+          CN_S3_BUCKET: !Ref CnS3BucketName
+          SSM_CN_CREDENTIALS: !Ref SsmCnCredentials
+      Events:
+        SnsEvent:
+          Type: SNS
+          Properties:
+            Topic: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:${S3BucketSNS}
