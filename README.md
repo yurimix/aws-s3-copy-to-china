@@ -27,6 +27,7 @@ Note: using SSM to store sensitive data is one of techniques which can be used t
 This Lambda is subscribed to SNS events, but can be easily modified to use direct S3 bucket events.
 
 # Deployment
+Make sure AWS CLI is installed and configured to use.
 
 ## Prepare S3 bucket for Lambda deployment
 * Go to AWS S3 console and choose one of existing (or create a new one) S3 bucket which will be used for deployment.
@@ -54,9 +55,6 @@ aws cloudformation deploy --template-file packaged.yml --stack-name to-s3-china 
   --parameter-overrides CnS3BucketName=ch-bucket CnS3BucketRegion=cn-north-1 S3BucketSNS=s3-sns-topic SsmCnCredentials=cn-credentials
 ```
 
-
-
-
-
-
+Regads,
+Y.
 
