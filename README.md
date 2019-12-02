@@ -13,7 +13,7 @@ Please consider the code as a sample, which can be adapted for your final decisi
 
 # Lambda
 It is assumed that Lambda will be deployed in AWS Global region because AWS China does not support
-Lambda parameters (Dec, 2019. Why?..).
+Lambda parameters (Dec, 2019. And why?..).
 
 So, Lambda has the following configuration:
 * CN_REGION - name of one of region in China (cn-north-1, cn-northwest-1)
