@@ -55,6 +55,6 @@ aws cloudformation deploy --template-file packaged.yml --stack-name to-s3-china 
   --parameter-overrides CnS3BucketName=ch-bucket CnS3BucketRegion=cn-north-1 S3BucketSNS=s3-sns-topic SsmCnCredentials=cn-credentials
 ```
 
-Regads,
+Good luck,  
 Y.
 
