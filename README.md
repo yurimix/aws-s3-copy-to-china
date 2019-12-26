@@ -55,6 +55,11 @@ aws cloudformation deploy --template-file packaged.yml --stack-name to-s3-china 
   --parameter-overrides CnS3BucketName=ch-bucket CnS3BucketRegion=cn-north-1 S3BucketSNS=s3-sns-topic SsmCnCredentials=cn-credentials
 ```
 
+# Limitations
+This example has the following limitations:
+* Files are too large. If the file size exceeds 5 GB, this code wont work (AWS restrictions for copying large objects). To avoid such limitaion you need to use multipart upload (see [https://github.com/YuriShadrin/aws-s3-copy-large])
+* Lambda execution time. Take into consideration Lambda's max execution time (currently 15 min) may be insufficient to copy large files.
+
 Good luck,  
 Y.
 
